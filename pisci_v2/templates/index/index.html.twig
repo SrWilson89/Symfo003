@@ -1,0 +1,25 @@
+{# templates/index/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="d-flex flex-column gap-4 align-items-center">
+            <h1>{{ empresa }}</h1>
+            <h2 class="text-center">Selecciona un empleado para iniciar sesión</h2>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                {% if empleados|length == 0 %}
+                    <p class="text-center text-muted">No existen empleados.</p>
+                {% else %}
+                    {% for empleado in empleados %}
+                        <a href="{{ path('app_login', {'id_empleado': empleado.idEmpleado}) }}" class="btn btn-primary">
+                            {{ empleado.nombre }}
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

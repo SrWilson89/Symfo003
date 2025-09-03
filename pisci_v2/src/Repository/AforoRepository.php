@@ -20,7 +20,7 @@ class AforoRepository extends ServiceEntityRepository
     public function findAforoByHour(\DateTime $date): array
     {
         $qb = $this->createQueryBuilder('a')
-            ->select('SUBSTRING(a.fecha, 12, 2) AS hora, SUM(a.ctd) AS total')
+            ->select('SUBSTRING(a.fecha, 12, 2) AS hora, SUM(a.total) AS total')
             ->where('a.fecha BETWEEN :start AND :end')
             ->setParameter('start', $date->format('Y-m-d 00:00:00'))
             ->setParameter('end', $date->format('Y-m-d 23:59:59'))

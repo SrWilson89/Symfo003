@@ -1,0 +1,33 @@
+{# templates/venta/new.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Añadir Nueva Venta{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header text-white bg-success">
+                        <h1 class="h5 mb-0">Añadir Nueva Venta</h1>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(ventaForm) }}
+                            {{ form_row(ventaForm.empleado) }}
+                            {{ form_row(ventaForm.total) }}
+                            {{ form_row(ventaForm.fecha) }}
+
+                            <button type="submit" class="btn btn-success mt-3 w-100">
+                                <i class="fas fa-save"></i> Guardar Venta
+                            </button>
+                        {{ form_end(ventaForm) }}
+                    </div>
+                </div>
+                <a href="{{ path('app_dashboard') }}" class="btn btn-secondary mt-3">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

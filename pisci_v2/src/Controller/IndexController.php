@@ -17,12 +17,10 @@ class IndexController extends AbstractController
         AsistenciaManager $asistenciaManager,
         EmpleadoRepository $empleadoRepository
     ): Response {
-        // Si ya hay una sesión de asistencia activa, redirigir al dashboard
         if ($asistenciaManager->isSessionActive()) {
             return $this->redirectToRoute('app_dashboard');
         }
 
-        // Obtener todos los empleados para mostrarlos en los botones
         $empleados = $empleadoRepository->findAll();
 
         return $this->render('index/index.html.twig', [
@@ -36,16 +34,13 @@ class IndexController extends AbstractController
     public function login(
         Request $request,
         AsistenciaManager $asistenciaManager,
-        // Inyectamos EmpleadoRepository para obtener la entidad completa
         EmpleadoRepository $empleadoRepository
     ): Response {
         $empleadoId = $request->query->getInt('id_empleado');
 
         if ($empleadoId) {
-            // Obtenemos la entidad Empleado
             $empleado = $empleadoRepository->find($empleadoId);
-            
-            // Si el empleado existe, iniciamos la sesión
+
             if ($empleado) {
                 $asistenciaManager->startSession($empleado);
             }
@@ -59,7 +54,6 @@ class IndexController extends AbstractController
     {
         $asistenciaManager->closeSession();
 
-        // Redirige al index para volver a la pantalla de inicio de sesión
         return $this->redirectToRoute('app_index');
     }
 }

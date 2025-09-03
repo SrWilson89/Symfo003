@@ -40,19 +40,17 @@ class DsbController extends AbstractController
             $horas[] = $item['hora'];
             $aforo[$item['hora']] = (int) $item['total'];
         }
-        
+
         $horas = array_unique($horas);
         sort($horas);
-        
+
         $ventasData = array_values($ventas);
         $aforoData = array_values($aforo);
 
-        // 3. Renderizar la vista
         return $this->render('dsb/index.html.twig', [
-            'name' => 'Dashboard',
-            'ventasData' => $ventasData,
-            'aforoData' => $aforoData,
-            'horas' => $horas
+            'ventas_por_hora' => $ventasData,
+            'aforo_por_hora' => $aforoData,
+            'horas' => $horas,
         ]);
     }
 }

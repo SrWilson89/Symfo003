@@ -1,39 +1,51 @@
 <?php
+// src/Entity/Aforo.php
 
 namespace App\Entity;
 
+use App\Repository\AforoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Aforo
- *
- * @ORM\Table(name="aforo")
- * @ORM\Entity
- */
+#[ORM\Entity(repositoryClass: AforoRepository::class)]
 class Aforo
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id_aforo", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $idAforo;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="ctd", type="integer", nullable=false, options={"unsigned"=true})
-     */
-    private $ctd;
+    #[ORM\Column]
+    private ?int $total = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="fecha", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
-    private $fecha = 'current_timestamp()';
+    #[ORM\Column]
+    private ?\DateTimeImmutable $fecha = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
+    public function getTotal(): ?int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): static
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    public function getFecha(): ?\DateTimeImmutable
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(\DateTimeImmutable $fecha): static
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
 }

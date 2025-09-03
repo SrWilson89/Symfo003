@@ -2,73 +2,138 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard | Mi Piscina{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h2>Dashboard</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Ventas por Hora</h3>
-                <canvas id="ventasChart"></canvas>
+    <div class="position-absolute top-0 end-0 p-3">
+        <a href="{{ path('app_index') }}" class="btn btn-primary me-2">
+            <i class="fas fa-home"></i> Ir a Index
+        </a>
+        <a href="{{ path('app_logout') }}" class="btn btn-warning">
+            <i class="fas fa-user-circle"></i> Cambiar Usuario
+        </a>
+    </div>
+
+    <h1>Dashboard de Ventas y Aforo</h1>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Ventas por Hora</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ventasChart"></canvas>
+                </div>
             </div>
-            <div class="col-md-6">
-                <h3>Aforo por Hora</h3>
-                <canvas id="aforoChart"></canvas>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Aforo por Hora</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="aforoChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const horas = {{ horas|json_encode|raw }};
-        const ventasData = {{ ventasData|json_encode|raw }};
-        const aforoData = {{ aforoData|json_encode|raw }};
+        <div class="position-absolute top-0 end-0 p-3">
+        <a href="{{ path('app_venta_nueva') }}" class="btn btn-success me-2">
+            <i class="fas fa-plus"></i> Nueva Venta
+        </a>
+        <a href="{{ path('app_index') }}" class="btn btn-primary me-2">
+            <i class="fas fa-home"></i> Ir a Index
+        </a>
+        <a href="{{ path('app_logout') }}" class="btn btn-warning">
+            <i class="fas fa-user-circle"></i> Cambiar Usuario
+        </a>
+    </div>
 
-        const ctxVentas = document.getElementById("ventasChart").getContext("2d");
-        const ventasChart = new Chart(ctxVentas, {
-            type: "line",
-            data: {
-                labels: horas,
-                datasets: [{
-                    label: "Ventas",
-                    data: ventasData,
-                    borderColor: "rgba(13, 110, 253, 1)",
-                    backgroundColor: "rgba(13, 110, 253, 0.2)",
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: "rgba(13, 110, 253, 1)",
-                }]
-            },
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Data para las ventas
+        const ventasData = {
+            labels: {{ horas|json_encode()|raw }},
+            datasets: [{
+                label: 'Ventas por Hora',
+                data: {{ ventas_por_hora|json_encode()|raw }},
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Data para el aforo
+        const aforoData = {
+            labels: {{ horas|json_encode()|raw }},
+            datasets: [{
+                label: 'Aforo por Hora',
+                data: {{ aforo_por_hora|json_encode()|raw }},
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Configuración para el gráfico de ventas
+        const ventasConfig = {
+            type: 'bar',
+            data: ventasData,
             options: {
                 responsive: true,
-                plugins: { legend: { display: true, position: "top" } },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Ventas del Día'
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, title: { display: true, text: "Ventas" } },
-                    x: { title: { display: true, text: "Hora" } }
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        });
+        };
 
-        const ctxAforo = document.getElementById("aforoChart").getContext("2d");
-        const aforoChart = new Chart(ctxAforo, {
-            type: "bar",
-            data: {
-                labels: horas,
-                datasets: [{
-                    label: "Aforo",
-                    data: aforoData,
-                    backgroundColor: "rgba(255, 193, 7, 0.7)",
-                    borderColor: "rgba(255, 193, 7, 1)",
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
+        // Configuración para el gráfico de aforo
+        const aforoConfig = {
+            type: 'bar',
+            data: aforoData,
             options: {
                 responsive: true,
-                plugins: { legend: { display: true, position: "top" } }
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Aforo del Día'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        });
+        };
+
+        // Renderizar los gráficos
+        const ventasChart = new Chart(
+            document.getElementById('ventasChart'),
+            ventasConfig
+        );
+
+        const aforoChart = new Chart(
+            document.getElementById('aforoChart'),
+            aforoConfig
+        );
     </script>
 {% endblock %}

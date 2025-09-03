@@ -1,25 +1,44 @@
-{# templates/index/index.html.twig #}
+{# templates/index/index.twig #}
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ name }}{% endblock %}
+{% block title %}Inicio de Sesión - TPV{% endblock %}
 
 {% block body %}
-    <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="d-flex flex-column gap-4 align-items-center">
-            <h1>{{ empresa }}</h1>
-            <h2 class="text-center">Selecciona un empleado para iniciar sesión</h2>
-            <div class="d-flex flex-wrap gap-2 justify-content-center">
-                {% if empleados|length == 0 %}
-                    <p class="text-center text-muted">No existen empleados.</p>
-                {% else %}
-                    {% for empleado in empleados %}
-                        <a href="{{ path('app_login', {'id_empleado': empleado.idEmpleado}) }}" class="btn btn-primary">
-                            {{ empleado.nombre }}
-                        </a>
-                    {% endfor %}
-                {% endif %}
+    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div class="card shadow-lg p-4 bg-white" style="width: 28rem;">
+            <div class="card-body text-center">
+                <h1 class="card-title fw-bold text-primary mb-3">{{ empresa }}</h1>
+                <h2 class="card-subtitle mb-4 text-muted">Selecciona un empleado para iniciar sesión</h2>
+                <hr class="mb-4">
+                <div class="row row-cols-2 g-3">
+                    {% if empleados|length == 0 %}
+                        <div class="col-12">
+                            <p class="text-center text-muted">No existen empleados.</p>
+                        </div>
+                    {% else %}
+                        {% for empleado in empleados %}
+                            <div class="col">
+                                <a href="{{ path('app_login', {'id_empleado': empleado.id}) }}" class="btn btn-primary btn-lg w-100 py-3 d-flex flex-column align-items-center justify-content-center">
+                                    <i class="fas fa-user-circle fa-2x mb-2"></i>
+                                    <span class="fs-5">{{ empleado.nombre }}</span>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

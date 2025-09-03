@@ -4,128 +4,522 @@
 
 {% block title %}Dashboard | Mi Piscina{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .dashboard-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #28a745, #20c997, #17a2b8, #6f42c1, #e83e8c);
+            background-size: 400% 100%;
+            animation: gradient-flow 3s ease infinite;
+        }
+        
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .dashboard-title {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-subtitle {
+            color: #6c757d;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+        
+        .action-buttons {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+        
+        .btn-modern {
+            border: none;
+            border-radius: 15px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        
+        .btn-success-modern {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .btn-warning-modern {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: white;
+        }
+        
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .chart-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-header.ventas {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+        }
+        
+        .chart-header.aforo {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+        
+        .chart-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+        }
+        
+        .chart-header h5 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-body {
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .stats-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #495057;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .floating-action-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.6);
+        }
+        
+        .welcome-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .dashboard-title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                position: static;
+                justify-content: center;
+                margin-top: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .chart-body {
+                padding: 1rem;
+            }
+            
+            .floating-action-btn {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <div class="position-absolute top-0 end-0 p-3">
-        <a href="{{ path('app_index') }}" class="btn btn-primary me-2">
-            <i class="fas fa-home"></i> Ir a Index
-        </a>
-        <a href="{{ path('app_logout') }}" class="btn btn-warning">
-            <i class="fas fa-user-circle"></i> Cambiar Usuario
-        </a>
-    </div>
+    <div class="dashboard-container">
+        <div class="container-fluid">
+            <!-- Header del Dashboard -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-swimming-pool text-primary"></i>
+                    Dashboard Mi Piscina
+                </h1>
+                <p class="dashboard-subtitle">Panel de control de ventas y aforo</p>
+                <span class="welcome-badge">
+                    <i class="fas fa-chart-line"></i>
+                    Gestión en tiempo real
+                </span>
+            </div>
 
-    <h1>Dashboard de Ventas y Aforo</h1>
+            <!-- Botones de Acción -->
+            <div class="action-buttons">
+                <a href="{{ path('app_venta_nueva') }}" class="btn-modern btn-success-modern pulse">
+                    <i class="fas fa-plus"></i> Nueva Venta
+                </a>
+                <a href="{{ path('app_index') }}" class="btn-modern btn-primary-modern">
+                    <i class="fas fa-home"></i> Ir a Index
+                </a>
+                <a href="{{ path('app_logout') }}" class="btn-modern btn-warning-modern">
+                    <i class="fas fa-user-circle"></i> Cambiar Usuario
+                </a>
+            </div>
 
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Ventas por Hora</h5>
+            <!-- Gráficos -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-header ventas">
+                            <h5>
+                                <i class="fas fa-cash-register"></i>
+                                Ventas por Hora
+                            </h5>
+                        </div>
+                        <div class="chart-body">
+                            <div class="stats-overlay">
+                                <i class="fas fa-euro-sign"></i>
+                                Total: €{{ ventas_por_hora|reduce((carry, v) => carry + v, 0)|number_format(2) }}
+                            </div>
+                            <canvas id="ventasChart"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="ventasChart"></canvas>
+
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-header aforo">
+                            <h5>
+                                <i class="fas fa-users"></i>
+                                Aforo por Hora
+                            </h5>
+                        </div>
+                        <div class="chart-body">
+                            <div class="stats-overlay">
+                                <i class="fas fa-user-friends"></i>
+                                Total: {{ aforo_por_hora|reduce((carry, v) => carry + v, 0) }}
+                            </div>
+                            <canvas id="aforoChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Aforo por Hora</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="aforoChart"></canvas>
-                </div>
-            </div>
-        </div>
     </div>
 
-        <div class="position-absolute top-0 end-0 p-3">
-        <a href="{{ path('app_venta_nueva') }}" class="btn btn-success me-2">
-            <i class="fas fa-plus"></i> Nueva Venta
-        </a>
-        <a href="{{ path('app_index') }}" class="btn btn-primary me-2">
-            <i class="fas fa-home"></i> Ir a Index
-        </a>
-        <a href="{{ path('app_logout') }}" class="btn btn-warning">
-            <i class="fas fa-user-circle"></i> Cambiar Usuario
-        </a>
-    </div>
+    <!-- Botón Flotante de Acción Rápida -->
+    <button class="floating-action-btn" onclick="window.location.href='{{ path('app_venta_nueva') }}'" title="Nueva Venta">
+        <i class="fas fa-plus"></i>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // Data para las ventas
+        // Configuración de colores modernos
+        const modernColors = {
+            ventas: {
+                gradient: ['#007bff', '#0056b3'],
+                solid: 'rgba(0, 123, 255, 0.8)',
+                border: 'rgba(0, 123, 255, 1)'
+            },
+            aforo: {
+                gradient: ['#17a2b8', '#138496'],
+                solid: 'rgba(23, 162, 184, 0.8)',
+                border: 'rgba(23, 162, 184, 1)'
+            }
+        };
+
+        // Data para las ventas con gradiente
         const ventasData = {
             labels: {{ horas|json_encode()|raw }},
             datasets: [{
-                label: 'Ventas por Hora',
+                label: 'Ventas por Hora (€)',
                 data: {{ ventas_por_hora|json_encode()|raw }},
-                backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
+                backgroundColor: modernColors.ventas.solid,
+                borderColor: modernColors.ventas.border,
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         };
 
-        // Data para el aforo
+        // Data para el aforo con gradiente
         const aforoData = {
             labels: {{ horas|json_encode()|raw }},
             datasets: [{
-                label: 'Aforo por Hora',
+                label: 'Personas',
                 data: {{ aforo_por_hora|json_encode()|raw }},
-                backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
+                backgroundColor: modernColors.aforo.solid,
+                borderColor: modernColors.aforo.border,
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         };
 
-        // Configuración para el gráfico de ventas
+        // Configuración mejorada para el gráfico de ventas
         const ventasConfig = {
             type: 'bar',
             data: ventasData,
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Ventas del Día'
+                        text: 'Ingresos del Día por Horas',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        color: '#2c3e50'
                     }
                 },
                 scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                weight: '500'
+                            }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '€' + value.toFixed(2);
+                            },
+                            font: {
+                                weight: '500'
+                            }
+                        }
                     }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
                 }
             }
         };
 
-        // Configuración para el gráfico de aforo
+        // Configuración mejorada para el gráfico de aforo
         const aforoConfig = {
             type: 'bar',
             data: aforoData,
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Aforo del Día'
+                        text: 'Ocupación del Día por Horas',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        color: '#2c3e50'
                     }
                 },
                 scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                weight: '500'
+                            }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                weight: '500'
+                            }
+                        }
                     }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
                 }
             }
         };
 
-        // Renderizar los gráficos
+        // Renderizar los gráficos con altura fija
+        document.getElementById('ventasChart').style.height = '400px';
+        document.getElementById('aforoChart').style.height = '400px';
+
         const ventasChart = new Chart(
             document.getElementById('ventasChart'),
             ventasConfig
@@ -135,5 +529,21 @@
             document.getElementById('aforoChart'),
             aforoConfig
         );
+
+        // Animación de entrada para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.chart-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'all 0.8s ease';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 200);
+            });
+        });
     </script>
 {% endblock %}

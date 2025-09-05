@@ -5,31 +5,33 @@ namespace App\Entity;
 use App\Repository\VentaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VentaRepository::class)]
+#[ORM\Table(name: "ventas")]
 class Venta
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(name: "id_venta", type: "integer")]
+    private ?int $id_venta = null;
 
     #[ORM\ManyToOne(inversedBy: 'ventas')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Empleado $empleado = null;
+    #[ORM\JoinColumn(name: "cliente_id", referencedColumnName: "id_cliente", nullable: true)]
+    private ?Cliente $cliente = null;
 
-    // Se cambió 'cantidad' a 'total' para que coincida con la base de datos
-    #[ORM\Column]
-    private ?float $total = null;
+    #[ORM\ManyToOne(inversedBy: 'ventas')]
+    #[ORM\JoinColumn(name: "arqueo_id", referencedColumnName: "id_arqueo", nullable: false)]
+    private ?Arqueo $arqueo = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $fecha = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $total = null;
 
-    /**
-     * @var Collection<int, VentaDetalle>
-     */
-    #[ORM\OneToMany(targetEntity: VentaDetalle::class, mappedBy: 'venta', orphanRemoval: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $fecha_venta = null;
+
+    #[ORM\OneToMany(mappedBy: 'venta', targetEntity: VentaDetalle::class, orphanRemoval: true)]
     private Collection $ventaDetalles;
 
     public function __construct()
@@ -37,45 +39,55 @@ class Venta
         $this->ventaDetalles = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getIdVenta(): ?int
     {
-        return $this->id;
+        return $this->id_venta;
     }
 
-    public function getEmpleado(): ?Empleado
+    public function getCliente(): ?Cliente
     {
-        return $this->empleado;
+        return $this->cliente;
     }
 
-    public function setEmpleado(?Empleado $empleado): static
+    public function setCliente(?Cliente $cliente): static
     {
-        $this->empleado = $empleado;
+        $this->cliente = $cliente;
 
         return $this;
     }
 
-    // Se cambió 'getCantidad' a 'getTotal'
-    public function getTotal(): ?float
+    public function getArqueo(): ?Arqueo
+    {
+        return $this->arqueo;
+    }
+
+    public function setArqueo(?Arqueo $arqueo): static
+    {
+        $this->arqueo = $arqueo;
+
+        return $this;
+    }
+
+    public function getTotal(): ?string
     {
         return $this->total;
     }
 
-    // Se cambió 'setCantidad' a 'setTotal'
-    public function setTotal(float $total): static
+    public function setTotal(string $total): static
     {
         $this->total = $total;
 
         return $this;
     }
 
-    public function getFecha(): ?\DateTimeImmutable
+    public function getFechaVenta(): ?\DateTimeImmutable
     {
-        return $this->fecha;
+        return $this->fecha_venta;
     }
 
-    public function setFecha(\DateTimeImmutable $fecha): static
+    public function setFechaVenta(\DateTimeImmutable $fecha_venta): static
     {
-        $this->fecha = $fecha;
+        $this->fecha_venta = $fecha_venta;
 
         return $this;
     }
@@ -101,6 +113,7 @@ class Venta
     public function removeVentaDetalle(VentaDetalle $ventaDetalle): static
     {
         if ($this->ventaDetalles->removeElement($ventaDetalle)) {
+            // set the owning side to null (unless already changed)
             if ($ventaDetalle->getVenta() === $this) {
                 $ventaDetalle->setVenta(null);
             }

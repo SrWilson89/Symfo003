@@ -1,0 +1,107 @@
+{# templates/arqueo/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Arqueo{% endblock %}
+
+{% block body %}
+    <div class="container mt-5" style="max-width: 1200px;">
+        <h2 class="mb-4">Arqueo</h2>
+        <form action="{{ path('app_arqueo') }}" method="POST">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="empleado" class="form-label">Empleado</label>
+                        <input type="text" class="form-control" readonly value="{{ arqueo.empleado.nombre }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Apertura</label>
+                        <input type="text" class="form-control" readonly value="{{ arqueo.fechaInicio|date('d/m/Y H:i:s') }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fondo" class="form-label">Fondo de Maniobra</label>
+                        <input type="text" class="form-control" readonly value="{{ arqueo.fondo }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ventas Total</label>
+                        <input type="text" class="form-control" readonly value="{{ arqueo.ventasTotal }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ventas Efectivo</label>
+                        <input type="text" class="form-control" readonly value="{{ arqueo.ventasEfectivo }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descuadre</label>
+                        <input type="text" class="form-control" readonly value="{{ descuadre|number_format(2, ',', '.') }} €"/>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">1 cto</label>
+                        <input type="text" class="form-control" name="1cto" value="{{ arqueo.cto1 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">2 cto</label>
+                        <input type="text" class="form-control" name="2cto" value="{{ arqueo.cto2 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">5 cto</label>
+                        <input type="text" class="form-control" name="5cto" value="{{ arqueo.cto5 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">10 cto</label>
+                        <input type="text" class="form-control" name="10cto" value="{{ arqueo.cto10 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">20 cto</label>
+                        <input type="text" class="form-control" name="20cto" value="{{ arqueo.cto20 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">50 cto</label>
+                        <input type="text" class="form-control" name="50cto" value="{{ arqueo.cto50 }}"/>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">1 Euro</label>
+                        <input type="text" class="form-control" name="1euro" value="{{ arqueo.euro1 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">2 Euro</label>
+                        <input type="text" class="form-control" name="2euro" value="{{ arqueo.euro2 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">5 Euro</label>
+                        <input type="text" class="form-control" name="5euro" value="{{ arqueo.euro5 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">10 Euro</label>
+                        <input type="text" class="form-control" name="10euro" value="{{ arqueo.euro10 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">20 Euro</label>
+                        <input type="text" class="form-control" name="20euro" value="{{ arqueo.euro20 }}"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">50 Euro</label>
+                        <input type="text" class="form-control" name="50euro" value="{{ arqueo.euro50 }}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary" name="guardar" {{ btnSave }} {{ btnSaveDisplay }}>
+                    <i class="bi bi-save-fill me-1"></i> Guardar
+                </button>
+                <button type="submit" class="btn btn-danger" name="confirmar" {{ btnConfirmDisplay }}>
+                    <i class="bi bi-save-fill me-1"></i> Confirmar
+                </button>
+                <a href="{{ path('app_tpv') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left-circle-fill me-1"></i> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

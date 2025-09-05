@@ -1,30 +1,58 @@
 <?php
-// src/Controller/TpvController.php
 
 namespace App\Controller;
 
-use App\Repository\ProductoRepository;
-use App\Service\AsistenciaManager;
+use App\Entity\Arqueo;
+use App\Entity\Asistencia;
+use App\Entity\Producto;
+use App\Entity\Venta;
+use App\Entity\VentaDetalle;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use DateTime;
+use App\Controller\MainController;
 
 class TpvController extends AbstractController
 {
-    #[Route("/tpv", name: "app_tpv")]
-    public function index(AsistenciaManager $asistenciaManager, ProductoRepository $productoRepository): Response
+    #[Route('/tpv', name: 'app_tpv')]
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Comprobamos si hay un empleado logeado
-        if (!$asistenciaManager->isSessionActive()) {
+        // 1. Comprobar que existe un empleado logueado (asistencia)
+        $asistencia = $entityManager->getRepository(Asistencia::class)->findOneBy(['fechaFin' => null]);
+        if (!$asistencia) {
             return $this->redirectToRoute('app_index');
         }
 
-        // Obtenemos los productos activos para el día de hoy
-        $productos = $productoRepository->findTodayProducts();
+        // 2. Abrir arqueo
+        if ($request->isMethod('POST') && $request->request->has('fondo')) {
+            $fondo = $request->request->get('fondo');
+            $arqueo = new Arqueo();
+            $arqueo->setEmpleado($asistencia->getEmpleado());
+            $arqueo->setFondo($fondo);
+            $arqueo->setFechaInicio(new DateTime());
 
+            $entityManager->persist($arqueo);
+            $entityManager->flush();
+        }
+
+        // 3. Comprobar si hay un arqueo abierto
+        $arqueoAbierto = $entityManager->getRepository(Arqueo::class)->findOneBy(['fechaFin' => null]);
+        if (!$arqueoAbierto) {
+            return $this->render('tpv/arqueo.html.twig', [
+                'name' => 'Apertura de Arqueo',
+            ]);
+        }
+
+        // 4. Obtener productos
+        $productos = $entityManager->getRepository(Producto::class)->findToday();
+
+        // 5. Renderizar la vista principal del TPV
         return $this->render('tpv/index.html.twig', [
-            'name' => 'TPV',
             'productos' => $productos,
+            'name' => 'TPV',
         ]);
     }
 }

@@ -1,0 +1,64 @@
+{# templates/cliente/ver.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Cliente #{{ cliente.id }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Detalles del Cliente #{{ cliente.id }}</h1>
+        <hr>
+
+        <div class="d-flex justify-content-between mb-4">
+            <a href="{{ path('app_list', {'entityName': 'clientes'}) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Clientes
+            </a>
+            <a href="{{ path('app_asociado_nuevo', {'id_cliente': cliente.id}) }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Añadir Asociado
+            </a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Asociados del Cliente</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Titular</th>
+                                <th>Nombre</th>
+                                <th>DNI</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asociado in cliente.asociados %}
+                                <tr>
+                                    <td>{{ asociado.id }}</td>
+                                    <td>
+                                        {% if asociado.esTitular() %}
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ asociado.nombre }}</td>
+                                    <td>{{ asociado.dni }}</td>
+                                    <td>
+                                        <a href="{{ path('app_asociado_editar', {'id_cliente': cliente.id, 'id': asociado.id}) }}" class="btn btn-sm btn-info">Editar</a>
+                                        <a href="{{ path('app_asociado_eliminar', {'id': asociado.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este asociado?');">Eliminar</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No hay asociados para este cliente.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

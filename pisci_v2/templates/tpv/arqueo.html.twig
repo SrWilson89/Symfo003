@@ -1,0 +1,20 @@
+{# templates/tpv/arqueo.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Apertura de {{ name }}{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="width: 22rem;">
+            <h1 class="h4 text-center mb-4">Apertura de {{ name }}</h1>
+            <form action="{{ path('app_tpv') }}" method="post">
+                <div class="mb-3">
+                    <label for="fondo" class="form-label">Fondo inicial</label>
+                    <input type="number" class="form-control" id="fondo" name="fondo" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Abrir Arqueo</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

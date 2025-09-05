@@ -1,37 +1,45 @@
 <?php
-// src/Entity/Asistencia.php
 
 namespace App\Entity;
 
 use App\Repository\AsistenciaRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AsistenciaRepository::class)]
+#[ORM\Table(name: "asistencias")]
 class Asistencia
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    #[ORM\Column(name: "id_asistencia", type: "integer")]
+    private ?int $id_asistencia = null;
 
-    #[ORM\Column(type: 'datetime_immutable')]
-    private $fecha_inicio;
+    #[ORM\ManyToOne(inversedBy: 'asistencias')]
+    #[ORM\JoinColumn(name: "empleado_id", referencedColumnName: "id_empleado", nullable: false)]
+    private ?Empleado $empleado = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $fecha_fin;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $fecha_inicio = null;
 
-    #[ORM\ManyToOne(targetEntity: Empleado::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private $empleado;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $fecha_fin = null;
 
-    public function __construct()
+    public function getIdAsistencia(): ?int
     {
-        $this->fecha_inicio = new \DateTimeImmutable();
+        return $this->id_asistencia;
     }
 
-    public function getId(): ?int
+    public function getEmpleado(): ?Empleado
     {
-        return $this->id;
+        return $this->empleado;
+    }
+
+    public function setEmpleado(?Empleado $empleado): static
+    {
+        $this->empleado = $empleado;
+
+        return $this;
     }
 
     public function getFechaInicio(): ?\DateTimeImmutable
@@ -39,7 +47,7 @@ class Asistencia
         return $this->fecha_inicio;
     }
 
-    public function setFechaInicio(\DateTimeImmutable $fecha_inicio): self
+    public function setFechaInicio(\DateTimeImmutable $fecha_inicio): static
     {
         $this->fecha_inicio = $fecha_inicio;
 
@@ -51,21 +59,9 @@ class Asistencia
         return $this->fecha_fin;
     }
 
-    public function setFechaFin(?\DateTimeImmutable $fecha_fin): self
+    public function setFechaFin(?\DateTimeImmutable $fecha_fin): static
     {
         $this->fecha_fin = $fecha_fin;
-
-        return $this;
-    }
-
-    public function getEmpleado(): ?Empleado
-    {
-        return $this->empleado;
-    }
-
-    public function setEmpleado(?Empleado $empleado): self
-    {
-        $this->empleado = $empleado;
 
         return $this;
     }

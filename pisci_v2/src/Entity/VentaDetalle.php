@@ -1,30 +1,37 @@
 <?php
-// src/Entity/VentaDetalle.php
 
 namespace App\Entity;
 
 use App\Repository\VentaDetalleRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VentaDetalleRepository::class)]
+#[ORM\Table(name: "ventasdetalle")]
 class VentaDetalle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(name: "id_ventadetalle", type: "integer")]
+    private ?int $id_ventadetalle = null;
 
     #[ORM\ManyToOne(inversedBy: 'ventaDetalles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: "venta_id", referencedColumnName: "id_venta", nullable: false)]
     private ?Venta $venta = null;
 
-    // Esta es la propiedad que faltaba o estaba mal definida.
-    #[ORM\Column]
-    private ?float $cantidad = null;
+    #[ORM\ManyToOne(inversedBy: 'ventaDetalles')]
+    #[ORM\JoinColumn(name: "producto_id", referencedColumnName: "id_producto", nullable: false)]
+    private ?Producto $producto = null;
 
-    public function getId(): ?int
+    #[ORM\Column(name: "ctd")]
+    private ?int $cantidad = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $precio = null;
+
+    public function getIdVentadetalle(): ?int
     {
-        return $this->id;
+        return $this->id_ventadetalle;
     }
 
     public function getVenta(): ?Venta
@@ -39,14 +46,38 @@ class VentaDetalle
         return $this;
     }
 
-    public function getCantidad(): ?float
+    public function getProducto(): ?Producto
+    {
+        return $this->producto;
+    }
+
+    public function setProducto(?Producto $producto): static
+    {
+        $this->producto = $producto;
+
+        return $this;
+    }
+
+    public function getCantidad(): ?int
     {
         return $this->cantidad;
     }
 
-    public function setCantidad(float $cantidad): static
+    public function setCantidad(int $cantidad): static
     {
         $this->cantidad = $cantidad;
+
+        return $this;
+    }
+
+    public function getPrecio(): ?string
+    {
+        return $this->precio;
+    }
+
+    public function setPrecio(string $precio): static
+    {
+        $this->precio = $precio;
 
         return $this;
     }

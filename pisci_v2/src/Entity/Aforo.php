@@ -1,5 +1,4 @@
 <?php
-// src/Entity/Aforo.php
 
 namespace App\Entity;
 
@@ -7,32 +6,36 @@ use App\Repository\AforoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AforoRepository::class)]
+#[ORM\Table(name: "aforos")]
 class Aforo
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(name: "id_aforo", type: "integer")]
+    private ?int $id_aforo = null;
 
     #[ORM\Column]
-    private ?int $total = null;
+    private ?int $personas = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $fecha = null;
 
-    public function getId(): ?int
+    #[ORM\Column]
+    private ?int $capacidad = null;
+
+    public function getIdAforo(): ?int
     {
-        return $this->id;
+        return $this->id_aforo;
     }
 
-    public function getTotal(): ?int
+    public function getPersonas(): ?int
     {
-        return $this->total;
+        return $this->personas;
     }
 
-    public function setTotal(int $total): static
+    public function setPersonas(int $personas): static
     {
-        $this->total = $total;
+        $this->personas = $personas;
 
         return $this;
     }
@@ -45,6 +48,18 @@ class Aforo
     public function setFecha(\DateTimeImmutable $fecha): static
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getCapacidad(): ?int
+    {
+        return $this->capacidad;
+    }
+
+    public function setCapacidad(int $capacidad): static
+    {
+        $this->capacidad = $capacidad;
 
         return $this;
     }

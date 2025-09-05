@@ -1,0 +1,28 @@
+{# templates/asociado/form.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Asociado{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Asociado</h1>
+        <hr>
+
+        {{ form_start(asociadoForm) }}
+            {{ form_row(asociadoForm.nombre) }}
+            {{ form_row(asociadoForm.dni) }}
+            {{ form_row(asociadoForm.telefono) }}
+            {{ form_row(asociadoForm.esTitular) }}
+            {{ form_row(asociadoForm.fecha) }}
+            
+            <button type="submit" class="btn btn-primary mt-3">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+        {{ form_end(asociadoForm) }}
+
+        <a href="{{ path('app_cliente_ver', {'id': asociadoForm.vars.data.cliente.id}) }}" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Volver a Cliente
+        </a>
+    </div>
+{% endblock %}

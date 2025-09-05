@@ -2,59 +2,96 @@
 
 namespace App\Entity;
 
+use App\Repository\AsociadoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Asociados
- *
- * @ORM\Table(name="asociados")
- * @ORM\Entity
- */
-class Asociados
+#[ORM\Entity(repositoryClass: AsociadoRepository::class)]
+#[ORM\Table(name: "asociados")]
+class Asociado
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id_asociado", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $idAsociado;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: "id_asociado", type: "integer")]
+    private ?int $id_asociado = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="nombre", type="string", length=30, nullable=false)
-     */
-    private $nombre;
+    #[ORM\ManyToOne(inversedBy: 'asociados')]
+    #[ORM\JoinColumn(name: "cliente_id", referencedColumnName: "id_cliente", nullable: false)]
+    private ?Cliente $cliente = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="apellidos", type="string", length=30, nullable=false)
-     */
-    private $apellidos;
+    #[ORM\Column(length: 30)]
+    private ?string $nombre = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="dni", type="string", length=10, nullable=true, options={"default"="NULL"})
-     */
-    private $dni = 'NULL';
+    #[ORM\Column(length: 30)]
+    private ?string $apellidos = null;
 
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="cliente_id", type="integer", nullable=true, options={"default"="NULL","unsigned"=true})
-     */
-    private $clienteId = NULL;
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $dni = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="fecha", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
-    private $fecha = 'current_timestamp()';
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $telefono = null;
 
+    public function getIdAsociado(): ?int
+    {
+        return $this->id_asociado;
+    }
 
+    public function getCliente(): ?Cliente
+    {
+        return $this->cliente;
+    }
+
+    public function setCliente(?Cliente $cliente): static
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    public function getNombre(): ?string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre): static
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getApellidos(): ?string
+    {
+        return $this->apellidos;
+    }
+
+    public function setApellidos(string $apellidos): static
+    {
+        $this->apellidos = $apellidos;
+
+        return $this;
+    }
+
+    public function getDni(): ?string
+    {
+        return $this->dni;
+    }
+
+    public function setDni(?string $dni): static
+    {
+        $this->dni = $dni;
+
+        return $this;
+    }
+
+    public function getTelefono(): ?string
+    {
+        return $this->telefono;
+    }
+
+    public function setTelefono(?string $telefono): static
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
 }

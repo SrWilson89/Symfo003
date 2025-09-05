@@ -1,0 +1,92 @@
+{# templates/list/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de {{ entityName|capitalize }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Listado de {{ entityName|capitalize }}</h1>
+        <hr>
+
+        <div class="mb-3 d-flex justify-content-end">
+            <a href="{{ path('app_dashboard') }}" class="btn btn-secondary me-2">
+                <i class="fas fa-home"></i> Volver al Dashboard
+            </a>
+            <a href="{{ path('app_list', {'entityName': entityName}) }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Añadir nuevo
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        {# Esto es un ejemplo. Debes adaptar los encabezados a cada entidad #}
+                        <th>ID</th>
+                        {% if entityName == 'clientes' %}
+                            <th>Notas</th>
+                            <th>Asociado Principal</th>
+                            <th>Fecha</th>
+                        {% elseif entityName == 'empleados' %}
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Teléfono</th>
+                            <th>DNI</th>
+                        {% elseif entityName == 'productos' %}
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Tipo</th>
+                        {% elseif entityName == 'ventas' %}
+                            <th>Empleado</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                        {% elseif entityName == 'asociados' %}
+                            <th>Nombre</th>
+                            <th>DNI</th>
+                            <th>Teléfono</th>
+                        {% endif %}
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            {% if entityName == 'clientes' %}
+                                <td>{{ item.notas|default('N/A') }}</td>
+                                <td>{{ item.asociado.nombre|default('N/A') }}</td>
+                                <td>{{ item.fecha|date('d-m-Y') }}</td>
+                            {% elseif entityName == 'empleados' %}
+                                <td>{{ item.nombre }}</td>
+                                <td>{{ item.apellidos }}</td>
+                                <td>{{ item.telefono }}</td>
+                                <td>{{ item.dni }}</td>
+                            {% elseif entityName == 'productos' %}
+                                <td>{{ item.nombre }}</td>
+                                <td>{{ item.precio }} €</td>
+                                <td>{{ item.tipo }}</td>
+                            {% elseif entityName == 'ventas' %}
+                                <td>{{ item.empleado.nombre }}</td>
+                                <td>{{ item.total }} €</td>
+                                <td>{{ item.fecha|date('d-m-Y H:i') }}</td>
+                            {% elseif entityName == 'asociados' %}
+                                <td>{{ item.nombre }}</td>
+                                <td>{{ item.dni }}</td>
+                                <td>{{ item.telefono }}</td>
+                            {% endif %}
+                            <td>
+                                <a href="#" class="btn btn-sm btn-info">Editar</a>
+                                <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="100%">No hay elementos para mostrar.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

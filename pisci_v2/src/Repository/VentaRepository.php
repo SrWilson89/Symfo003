@@ -1,12 +1,20 @@
 <?php
-// src/Repository/VentaRepository.php
 
 namespace App\Repository;
 
 use App\Entity\Venta;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DateTime;
 
+/**
+ * @extends ServiceEntityRepository<Venta>
+ *
+ * @method Venta|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Venta|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Venta[]    findAll()
+ * @method Venta[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class VentaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,39 +22,26 @@ class VentaRepository extends ServiceEntityRepository
         parent::__construct($registry, Venta::class);
     }
 
-    /**
-     * @return float
-     */
-    public function findSalesToday(): float
+    public function getTotalVentas(DateTime $fechaInicio, ?DateTime $fechaFin = null, bool $soloEfectivo = false): float
     {
         $qb = $this->createQueryBuilder('v')
-            ->select('SUM(vd.cantidad)')
-            ->leftJoin('v.ventaDetalles', 'vd')
-            ->where('v.fecha BETWEEN :start AND :end')
-            ->setParameter('start', new \DateTime('today 00:00:00'))
-            ->setParameter('end', new \DateTime('today 23:59:59'))
-            ->getQuery();
+            ->select('SUM(vd.total)')
+            ->innerJoin('v.ventaDetalles', 'vd')
+            ->where('v.fecha >= :fechaInicio')
+            ->setParameter('fechaInicio', $fechaInicio);
 
-        $result = $qb->getSingleScalarResult();
+        if ($fechaFin) {
+            $qb->andWhere('v.fecha <= :fechaFin')
+               ->setParameter('fechaFin', $fechaFin);
+        }
 
-        return $result ?? 0;
-    }
+        if ($soloEfectivo) {
+            $qb->andWhere('v.metodoPago = :metodo')
+               ->setParameter('metodo', 'Efectivo');
+        }
 
-    /**
-     * @return array
-     */
-    public function findSalesByHour(\DateTime $date): array
-    {
-        $qb = $this->createQueryBuilder('v')
-            ->select('SUBSTRING(v.fecha, 12, 2) AS hora, SUM(vd.cantidad) AS total')
-            ->leftJoin('v.ventaDetalles', 'vd')
-            ->where('v.fecha BETWEEN :start AND :end')
-            ->setParameter('start', $date->format('Y-m-d 00:00:00'))
-            ->setParameter('end', $date->format('Y-m-d 23:59:59'))
-            ->groupBy('hora')
-            ->orderBy('hora', 'ASC')
-            ->getQuery();
+        $result = $qb->getQuery()->getSingleScalarResult();
 
-        return $qb->getResult();
+        return (float) $result;
     }
 }

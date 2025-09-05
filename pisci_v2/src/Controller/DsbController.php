@@ -14,9 +14,12 @@ class DsbController extends AbstractController
     public function index(VentasService $ventasService): Response
     {
         $totalVentas = $ventasService->getTotalVentas();
+        $ventasPorHora = $ventasService->getVentasPorHora();
 
         return $this->render('dsb/index.html.twig', [
             'totalVentas' => $totalVentas,
+            'empresa' => 'Mi Piscina',
+            'ventasPorHora' => $ventasPorHora,
         ]);
     }
 }

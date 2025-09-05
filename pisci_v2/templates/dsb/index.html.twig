@@ -1,109 +1,99 @@
-{# templates/dsb/index.html.twig #}
-
-{% extends 'base.html.twig' %}
-
-{% block title %}Dashboard | {{ empresa }}{% endblock %}
-
-{% block body %}
-    <h1>Dashboard de Ventas y Aforo</h1>
-    <hr>
-    
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card bg-primary text-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Ventas del Día</h5>
-                    <h2 class="card-text">{{ totalVentas|default(0) }} €</h2>
-                </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ empresa }} - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-body {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ path('app_dashboard') }}">Mi Piscina</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_dashboard' %}active{% endif %}" aria-current="page" href="{{ path('app_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_tpv' %}active{% endif %}" href="{{ path('app_tpv') }}">TPV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_arqueo' %}active{% endif %}" href="{{ path('app_arqueo') }}">Arqueo</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="listadosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Listados
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="listadosDropdown">
+                            <li><a class="dropdown-item" href="{{ path('app_list', {'entityName': 'clientes'}) }}">Clientes</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_list', {'entityName': 'empleados'}) }}">Empleados</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_list', {'entityName': 'productos'}) }}">Productos</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_list', {'entityName': 'ventas'}) }}">Ventas</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_list', {'entityName': 'asociados'}) }}">Asociados</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">Salir</a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card bg-success text-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Dinero en Arqueo</h5>
-                    <h2 class="card-text">{{ totalArqueo|default(0) }} €</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card bg-info text-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Aforo Actual</h5>
-                    <h2 class="card-text">{{ 'aforo_actual' }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Ventas por Hora</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="ventasChart"></canvas>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Total de Ventas de Hoy</div>
+                    <div class="card-body">
+                        <h5 class="card-title display-4">{{ totalVentas|number_format(2, ',', '.') }} €</h5>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Aforo por Hora</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="aforoChart"></canvas>
+        <h2 class="mt-5">Ventas por Hora</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Total de Ventas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta in ventasPorHora %}
+                                    <tr>
+                                        <td>{{ venta.hora }}</td>
+                                        <td>{{ venta.total|number_format(2, ',', '.') }} €</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No hay ventas registradas para hoy.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ventasData = {
-            labels: [{% for v in ventasPorHora %}'{{ v.hora }}h',{% endfor %}],
-            datasets: [{
-                label: 'Ventas',
-                data: [{% for v in ventasPorHora %}'{{ v.totalVentas }}',{% endfor %}],
-                backgroundColor: 'rgba(13, 110, 253, 0.7)',
-                borderColor: 'rgba(13, 110, 253, 1)',
-                borderWidth: 1,
-            }]
-        };
-
-        const aforoData = {
-            labels: [{% for a in aforoPorHora %}'{{ a.hora }}h',{% endfor %}],
-            datasets: [{
-                label: 'Aforo',
-                data: [{% for a in aforoPorHora %}'{{ a.totalAforo }}',{% endfor %}],
-                backgroundColor: 'rgba(25, 135, 84, 0.7)',
-                borderColor: 'rgba(25, 135, 84, 1)',
-                borderWidth: 1,
-            }]
-        };
-
-        // Renderizar los gráficos
-        new Chart(
-            document.getElementById('ventasChart'),
-            {
-                type: 'bar',
-                data: ventasData,
-                options: {
-                    responsive: true,
-                }
-            }
-        );
-
-        new Chart(
-            document.getElementById('aforoChart'),
-            {
-                type: 'bar',
-                data: aforoData,
-                options: {
-                    responsive: true,
-                }
-            }
-        );
-    </script>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

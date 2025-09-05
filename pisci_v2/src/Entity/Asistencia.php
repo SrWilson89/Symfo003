@@ -7,27 +7,27 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AsistenciaRepository::class)]
-#[ORM\Table(name: "asistencias")]
+#[ORM\Table(name: 'asistencia')]
 class Asistencia
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "id_asistencia", type: "integer")]
-    private ?int $id_asistencia = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'asistencias')]
-    #[ORM\JoinColumn(name: "empleado_id", referencedColumnName: "id_empleado", nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Empleado::class, inversedBy: 'asistencias')]
+    #[ORM\JoinColumn(name: 'empleado_id', referencedColumnName: 'id_empleado', nullable: false)]
     private ?Empleado $empleado = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeImmutable $fecha_inicio = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $fecha_inicio = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $fecha_fin = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $fecha_fin = null;
 
-    public function getIdAsistencia(): ?int
+    public function getId(): ?int
     {
-        return $this->id_asistencia;
+        return $this->id;
     }
 
     public function getEmpleado(): ?Empleado
@@ -42,24 +42,24 @@ class Asistencia
         return $this;
     }
 
-    public function getFechaInicio(): ?\DateTimeImmutable
+    public function getFechaInicio(): ?\DateTimeInterface
     {
         return $this->fecha_inicio;
     }
 
-    public function setFechaInicio(\DateTimeImmutable $fecha_inicio): static
+    public function setFechaInicio(\DateTimeInterface $fecha_inicio): static
     {
         $this->fecha_inicio = $fecha_inicio;
 
         return $this;
     }
 
-    public function getFechaFin(): ?\DateTimeImmutable
+    public function getFechaFin(): ?\DateTimeInterface
     {
         return $this->fecha_fin;
     }
 
-    public function setFechaFin(?\DateTimeImmutable $fecha_fin): static
+    public function setFechaFin(?\DateTimeInterface $fecha_fin): static
     {
         $this->fecha_fin = $fecha_fin;
 

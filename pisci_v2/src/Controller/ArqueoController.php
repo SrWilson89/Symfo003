@@ -36,31 +36,32 @@ class ArqueoController extends AbstractController
         $btnSave = '';
 
         if ($request->isMethod('POST')) {
-            $arqueo->setCto1($request->request->get('1cto', 0));
-            $arqueo->setCto2($request->request->get('2cto', 0));
-            $arqueo->setCto5($request->request->get('5cto', 0));
-            $arqueo->setCto10($request->request->get('10cto', 0));
-            $arqueo->setCto20($request->request->get('20cto', 0));
-            $arqueo->setCto50($request->request->get('50cto', 0));
-            $arqueo->setEuro1($request->request->get('1euro', 0));
-            $arqueo->setEuro2($request->request->get('2euro', 0));
-            $arqueo->setEuro5($request->request->get('5euro', 0));
-            $arqueo->setEuro10($request->request->get('10euro', 0));
-            $arqueo->setEuro20($request->request->get('20euro', 0));
-            $arqueo->setEuro50($request->request->get('50euro', 0));
-            $arqueo->setEuro100($request->request->get('100euro', 0)); // Agregado si lo necesitas
-            $arqueo->setEuro200($request->request->get('200euro', 0)); // Agregado si lo necesitas
-            $arqueo->setEuro500($request->request->get('500euro', 0)); // Agregado si lo necesitas
+            $arqueo->setVentasEfectivo($ventasEfectivo);
+            $arqueo->setVentasTotal($ventasTotal);
+            $arqueo->setCto1($request->request->get('cto1'));
+            $arqueo->setCto2($request->request->get('cto2'));
+            $arqueo->setCto5($request->request->get('cto5'));
+            $arqueo->setCto10($request->request->get('cto10'));
+            $arqueo->setCto20($request->request->get('cto20'));
+            $arqueo->setCto50($request->request->get('cto50'));
+            $arqueo->setEuro1($request->request->get('euro1'));
+            $arqueo->setEuro2($request->request->get('euro2'));
+            $arqueo->setEuro5($request->request->get('euro5'));
+            $arqueo->setEuro10($request->request->get('euro10'));
+            $arqueo->setEuro20($request->request->get('euro20'));
+            $arqueo->setEuro50($request->request->get('euro50'));
+            $arqueo->setEuro100($request->request->get('euro100'));
+            $arqueo->setEuro200($request->request->get('euro200'));
+            $arqueo->setEuro500($request->request->get('euro500'));
 
-            // Calcular el total introducido por el usuario
             $ventasUser = 0;
             $ventasUser += $arqueo->getCto1() * 0.01;
             $ventasUser += $arqueo->getCto2() * 0.02;
             $ventasUser += $arqueo->getCto5() * 0.05;
-            $ventasUser += $arqueo->getCto10() * 0.1;
-            $ventasUser += $arqueo->getCto20() * 0.2;
-            $ventasUser += $arqueo->getCto50() * 0.5;
-            $ventasUser += $arqueo->getEuro1() * 1;
+            $ventasUser += $arqueo->getCto10() * 0.10;
+            $ventasUser += $arqueo->getCto20() * 0.20;
+            $ventasUser += $arqueo->getCto50() * 0.50;
+            $ventasUser += $arqueo->getEuro1();
             $ventasUser += $arqueo->getEuro2() * 2;
             $ventasUser += $arqueo->getEuro5() * 5;
             $ventasUser += $arqueo->getEuro10() * 10;
@@ -94,15 +95,14 @@ class ArqueoController extends AbstractController
             }
         }
         
-        $arqueo->setVentasTotal($ventasTotal);
-        $arqueo->setVentasEfectivo($ventasEfectivo);
-
         return $this->render('arqueo/index.html.twig', [
             'arqueo' => $arqueo,
+            'ventasTotal' => $ventasTotal,
+            'ventasEfectivo' => $ventasEfectivo,
             'descuadre' => $descuadre,
-            'btnSave' => $btnSave,
             'btnSaveDisplay' => $btnSaveDisplay,
             'btnConfirmDisplay' => $btnConfirmDisplay,
+            'btnSave' => $btnSave
         ]);
     }
 }
